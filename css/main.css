@@ -1,0 +1,146 @@
+body{
+  background-color: black;
+}
+.container-fixed {
+  bottom: 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+border-1px{
+  border:1px;
+}
+.thumb{
+  padding: 3px;
+  text-align: left;
+}
+
+.youtube-result{
+  width: 20%;
+  top: 0px;
+  bottom: 0px;
+  right: 0%;
+  height: 100%;
+  position: absolute;
+  z-index: 2;
+  background-color: black;
+  color: yellow;
+  opacity: 0.5;
+  overflow-y: scroll;
+  padding: 10px;
+  font-family: monospace;
+}
+
+.thumb-img{
+  border: solid 2px #777a45;
+  border-radius: 6px;
+}
+#resizable{
+  border:solid;
+  width:30%;
+  bottom: 10px;
+  right: 10px;
+  height: 200px;
+  position:absolute;
+  min-width:320px;
+  opacity:0.9;
+  background-color: black;
+  color:white;
+}
+
+.container-fixed .col {
+  height: 100%;
+  overflow: auto;
+}
+
+.player_state{
+  position: absolute;
+    left: 40%;
+    margin-top: 10px;
+    font-size: 50px;
+    color: yellow;
+    background-color: black;
+    padding: 10px;
+}
+
+.div_selected{
+/*  box-shadow:0px 0px 0px 10px yellow inset;*/
+  opacity: 0.6!important;
+  background-color: #be0e0e!important;
+}
+
+.div_state{
+  height: 100%;
+  opacity:0;
+  background-color:black;
+  /*outline: 3px solid #ffffff;
+  outline-offset: -10px;
+  box-shadow:0px 0px 0px 10px yellow inset;*/
+}
+
+#youtubegrid-state{
+/*  display:none;*/
+}
+
+.CodeMirror-activeline-background {
+    background: #000000;
+    border-bottom: solid 2px yellow;
+    opacity:1.0;
+}
+.CodeMirror div.CodeMirror-cursor {
+    border-left: 3px solid white;
+}
+
+.ex-high{
+  background:yellow;
+  color:black!important;
+}
+
+.CodeMirror-selected {
+    background: #4e4e4e!important;
+}
+
+.cm-s-default .cm-string {
+    color: #ff3535;
+}
+
+.cm-s-default .cm-atom {
+    color: #518fff;
+}
+
+.cm-s-default .cm-number {
+    color: #2dffab;
+}
+
+.CodeMirror {
+  font-family: monospace;
+  font-size: 20pt;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.0);
+  opacity: 0.7;
+  color: white;
+}
+
+.go-back-editor{
+  display:none;
+  position:fixed;
+  right:0;
+  top:0px;
+  z-index:999;
+}
+
+
+.row-xs-12 { height: 100%; }
+.row-xs-11 { height: 91.66666666666666%; }
+.row-xs-10 { height: 83.33333333333334%; }
+.row-xs-9 { height: 75%; }
+.row-xs-8 { height: 66.66666666666666%; }
+.row-xs-7 { height: 58.333333333333336%; }
+.row-xs-6 { height: 50%; }
+.row-xs-5 { height: 41.66666666666667%;}
+.row-xs-4 { height: 33.33333333333333%;}
+.row-xs-3 { height: 25%; }
+.row-xs-2 { height: 16.666666666666664%; }
+.row-xs-1 { height: 8.333333333333332%; }

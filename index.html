@@ -1,0 +1,78 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>live coding youtube</title>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="./codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="./css/main.css">
+
+    <script src="./codemirror/lib/codemirror.js"></script>
+    <script src="./codemirror/mode/javascript/javascript.js"></script>
+    <script src="./codemirror/addon/selection/active-line.js"></script>
+    <script src="./codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="./js/webmidi.min.js"></script>
+    <script src="./js/midi.js"></script>
+    <script src="./js/jungle.js"></script>
+    <script src="./js/jungle_connect.js"></script>
+    <script src="./js/main.js"></script>
+
+
+  </head>
+  <body>
+    <div id= "youtubegrid"class="container-fixed">
+
+    </div>
+    <div id= "youtubegrid-state" class="container-fixed">
+
+    </div>
+
+<!--  <div id="resizable" class="ui-widget-content">
+      <div class="ui-widget-header">code editor</div>
+      -->
+      <div id= "code-container" class="container-fixed">
+
+      <div class="youtube-result">
+        <button class = "search-result-close-button btn btn-default">CLOSE</button>
+        <div class = "youtube-result-list">
+        </div>
+      </div>
+
+	      <textarea id="code" name="code">
+create(3,3,"XIMLoLxmTDw")
+searchPlay([0,1,2,3,4,5,6,7,8],"wind sound")
+searchPlay([2],'bassdrum sound sample')
+sequence(2,[10,14,18,20,30],1.0)
+loopAt(2,81,0.8)
+    </textarea>
+
+    </div>
+    <div class = "go-back-editor">
+          <button class = "go-back-button btn btn-default">Go Back</button>
+        </div>
+
+
+
+  </body>
+</html>
+
