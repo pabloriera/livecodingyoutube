@@ -112,7 +112,8 @@ $(document).ready(function () {
     $( "#resizable" ).resizable();
     $( "#resizable" ).draggable();
 
-    editor.getDoc().setValue(localStorage.getItem("code"));
+    if (localStorage.getItem("code")!=null)
+      editor.getDoc().setValue(localStorage.getItem("code"));
 
     var livecode = function(cm){
       var doc = cm.getDoc();
