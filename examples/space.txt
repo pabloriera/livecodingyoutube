@@ -1,0 +1,15 @@
+create(3,3,"XIMLoLxmTDw")
+
+searchPlay([0,1,2],"cosmic sounds")
+searchPlay([6,7,8],"astrology mysteries sounds",3)
+volume([6,7,8],80)
+loopAt([6,7,8],10.0,0.5)
+
+sequence([6,7,8],[10,20,30],1.5)
+
+searchPlay([4],"planets sounds effect",1)
+sequence(4,[10,20,30,20,10],0.5)
+volume(4,100)
+
+searchPlay([3],'bassdrum sound sample',1)44
+loopAt(3,0.1,1.0)

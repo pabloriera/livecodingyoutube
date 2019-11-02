@@ -96,18 +96,23 @@ function indexToIJ(index){
   return [Math.floor(index /gridVideos.length), index % gridVideos.length];
 }
 
+var editor;
+
 // run the function when the document is ready
 $(document).ready(function () {
-  var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+  editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         lineNumbers: false,
         styleActiveLine: true,
         matchBrackets: true,
         height: 'auto',
+        autofocus: true,
         mode:{name: "javascript", json: true}
     });
     // jquery ui
     $( "#resizable" ).resizable();
     $( "#resizable" ).draggable();
+
+    editor.getDoc().setValue(localStorage.getItem("code"));
 
     var livecode = function(cm){
       var doc = cm.getDoc();
@@ -190,7 +195,7 @@ $(document).ready(function () {
 
   $(window).keydown(function(ev){
     var keycode = ev.which;
-      if (keycode == 93 || keycode == 18){ // need to get
+      if (keycode == 93){ // need to get
         $(".div_selected").removeClass("div_selected");
 
         if($(".go-back-editor").is(':visible') ){
@@ -201,8 +206,8 @@ $(document).ready(function () {
           $("#code-container").hide();
           $(".go-back-editor").show();
           $("#youtubegrid-state").hide();
-        }
-        clickedVideos = [];
+        
+}        clickedVideos = [];
 
       }else if (keycode==27){
         var list =[];
@@ -242,7 +247,81 @@ $(document).ready(function () {
   $(".search-result-close-button").click(function(){
     $(".youtube-result").toggle();
   })
+
+  editor.on("change", function() {
+      localStorage.setItem("code", editor.getValue());
+  });
+
+
 });
+
+function euclidean_steps(onNotes, totalNotes) {
+  var groups = [];
+  for (var i = 0; i < totalNotes; i++) groups.push([Number(i < onNotes)]);
+
+  var l;
+  while (l = groups.length - 1) {
+    var start = 0, first = groups[0];
+    while (start < l && compareArrays(first, groups[start])) start++;
+    if (start === l) break;
+
+    var end = l, last = groups[l];
+    while (end > 0 && compareArrays(last, groups[end])) end--;
+    if (end === 0) break;
+
+    var count = Math.min(start, l - end);
+    groups = groups
+      .slice(0, count)
+      .map(function (group, i) { return group.concat(groups[l - i]); })
+      .concat(groups.slice(count, -count));
+  }
+  return [].concat.apply([], groups);
+};
+
+function compareArrays (a, b) {
+  // TODO: optimize
+  return JSON.stringify(a) === JSON.stringify(b);
+};
+
+
+function euclidean_durations(onNotes, totalNotes, duration) {
+
+   var p = [];
+   var ix = -1;
+   euclidean_steps(onNotes, totalNotes).forEach(function (value){
+    
+      if (value==1)
+      {
+         p.push(duration);
+         ix += 1;
+      }
+      else
+      {
+	 p[ix] += duration;
+      } 
+
+   });
+}
+
+
+function euclidean_durations(onNotes, totalNotes, duration) {
+
+   var p = [];
+   var ix = 0;
+   euclidean_steps(onNotes, totalNotes).forEach(function (value){
+
+      if (value==1)
+      {
+	 ix =+ 1;
+         p.push(duration*ix);
+      }
+      else
+      {
+         p.push(duration*ix);
+      }
+
+   });
+}
 
 /**
  * Add columns and rows to the grid
@@ -429,8 +508,7 @@ var searchResult = [];
  * Search YouTube. Selecto item on the right of the screen to get the YouTube identifier text.
  * @param {string} query - Query to search.
  */
-function searchPlay(list, query) {
-
+function searchPlay(list, query, offset=0) {
 	url = 'https://www.googleapis.com/youtube/v3/search';
 	var params = {	
 		part: 'snippet',
@@ -444,10 +522,11 @@ function searchPlay(list, query) {
 
 	$.getJSON(url, params, function (query) {
 		searchResult = query.items
-
+    var k = -1;
 		list.forEach(function(n)
 			{
-				cue(n, searchResult[n].id.videoId);
+        k+=1;
+				cue(n, searchResult[k+offset].id.videoId);
 				// play(n);
 			}	
 		)
@@ -912,6 +991,12 @@ function here(list){
   });
 }
 
+
+function euclid(list, onNotes, totalNotes, duration){
+	
+   sequence(list, euclidean_durations(onNotes, totalNotes, duration), duration); 
+
+}
 
 function sequence(list, steps, interval){
   var selectedVideos =  selectVideos(list);
