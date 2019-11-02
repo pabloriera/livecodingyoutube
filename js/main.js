@@ -28,6 +28,8 @@ var YTSTATE_PAUSED = 2;
 var YTSTATE_BUFFERING = 3;
 var YTSTATE_VIDEOCUED = 5;
 
+var vol_scale = 50;
+
 function onYouTubeIframeAPIReady() {
   if(DEBUG)console.log("is ready");
 }
@@ -196,7 +198,7 @@ $(document).ready(function () {
 
   $(window).keydown(function(ev){
     var keycode = ev.which;
-      if (keycode == 93){ // need to get
+      if (keycode == 9){ // need to get
         $(".div_selected").removeClass("div_selected");
 
         if($(".go-back-editor").is(':visible') ){
@@ -219,6 +221,8 @@ $(document).ready(function () {
         }else{
           $("#code-container").show();
           $(".go-back-editor").hide();
+          $('.CodeMirror')[0].CodeMirror.focus();
+
         }
 
         if(clickedVideos.length>0){
@@ -252,8 +256,6 @@ $(document).ready(function () {
   editor.on("change", function() {
       localStorage.setItem("code", editor.getValue());
   });
-
-
 });
 
 function euclidean_steps(onNotes, totalNotes) {
@@ -285,7 +287,7 @@ function compareArrays (a, b) {
 };
 
 
-function euclidean_durations(onNotes, totalNotes, duration) {
+function euclidean_durations(onNotes, totalNotes, duration, offset) {
 
    var p = [];
    var ix = -1;
@@ -298,14 +300,18 @@ function euclidean_durations(onNotes, totalNotes, duration) {
       }
       else
       {
-	 p[ix] += duration;
+	       p[ix] += duration;
       } 
 
    });
+
+   var i=-1;p.forEach(function (k){i+=1;p[i]=p[i]+offset})
+
+   return p;
 }
 
 
-function euclidean_durations(onNotes, totalNotes, duration) {
+function euclidean_durations(onNotes, totalNotes, duration, offset) {
 
    var p = [];
    var ix = 0;
@@ -313,7 +319,7 @@ function euclidean_durations(onNotes, totalNotes, duration) {
 
       if (value==1)
       {
-	 ix =+ 1;
+	       ix += 1;
          p.push(duration*ix);
       }
       else
@@ -322,6 +328,10 @@ function euclidean_durations(onNotes, totalNotes, duration) {
       }
 
    });
+
+   var i=-1;p.forEach(function (k){i+=1;p[i]=p[i]+offset})
+
+   return p;
 }
 
 /**
@@ -504,12 +514,11 @@ function addVideo(i,j){
   });
 }
 var searchResult = [];
-
 /**
  * Search YouTube. Selecto item on the right of the screen to get the YouTube identifier text.
  * @param {string} query - Query to search.
  */
-function searchPlay(list, query, offset=0) {
+function searchPlay(list, query, offset=0, category=null) {
 	url = 'https://www.googleapis.com/youtube/v3/search';
 	var params = {	
 		part: 'snippet',
@@ -518,8 +527,18 @@ function searchPlay(list, query, offset=0) {
 		type: "video",
     maxResults: 20,
     videoEmbeddable	:"true",
-    videoLicense:"youtube"
+    videoLicense:"any",
 	};
+
+  if (category!=null)
+  {
+    params['videoCategoryId'] = category;
+  } 
+  if (list==null)
+  {
+    list = [];
+    targetVideos.forEach(function(v,i){list.push(i);});
+  }
 
 	$.getJSON(url, params, function (query) {
 		searchResult = query.items
@@ -533,6 +552,18 @@ function searchPlay(list, query, offset=0) {
 		)
 
 	});
+}
+
+function printCategories() {
+
+url = 'https://www.googleapis.com/youtube/v3/videoCategories';
+  var params = {  
+    key: 'AIzaSyDAKDaBy_JDwcScSHqDQimOOLjdPImLanc', // github gist에서 본 api_token 이라서 새로 하나 받아야 할 것 같아요.
+  };
+
+  $.getJSON(url, params, function (query) {
+    console.log(query)
+  });
 }
 
 /**
@@ -619,12 +650,13 @@ function volume(list,vol) {
   selectedVideos.forEach(function(video){
     //video.setVolume(vol);
     adjustVolume(video, vol);
+    // volramp([video],0.2,video.getVolume(),vol);
   });
 }
 
 function adjustVolume(video, vol){
   video.setVolume(vol);
-  var opacity = 1 - vol/100;
+  var opacity = 1 - vol/vol_scale;
   $("#state-div-"+ video.lcy_i +"-"+ video.lcy_j).css("opacity", opacity);
 }
 
@@ -696,10 +728,10 @@ function fadeIn(list,duration) {
     if(!duration) duration = 5;
     var diff = 10.0 / duration;
     var selectedVideos =  selectVideos(list);
-    /*selectedVideos.forEach(function(v){
-      v.setVolume(0);
-    });
-*/
+    // selectedVideos.forEach(function(v){
+      // v.setVolume(0);
+    // });
+
     var fadeInCall = function(v){
       if(!v.lcy_fading){
         fadeInInner(v, diff);
@@ -710,11 +742,33 @@ function fadeIn(list,duration) {
       }
     };
     selectedVideos.forEach(fadeInCall);
-    /*
+    
+    // selectedV  ideos.forEach(function(v){
+      // fadeInInner(v, diff);
+    // });
+}
+
+function volramp(list, duration, init_vol=0, last_vol=100) {
+    if(!duration) duration = 5;
+    var diff = (last_vol-init_vol)/duration/100.0;
+    var selectedVideos =  selectVideos(list);
     selectedVideos.forEach(function(v){
-      fadeInInner(v, diff);
+      adjustVolume(v, init_vol);
     });
-*/
+
+    var rampcall = function(v) {
+        var timer=setInterval(function() {
+        
+        var currentVolume = v.getVolume();    
+        adjustVolume(v, currentVolume+diff);
+        if ((diff>0 & currentVolume>=last_vol ) | (diff<0 & currentVolume<=last_vol )) {
+          clearInterval( timer );
+        }
+      },10);
+    }
+
+    selectedVideos.forEach(rampcall);
+
 }
 
 function fadeOutInner(video, diff) {
@@ -877,6 +931,8 @@ function sync(list, index){
     seek(list, targetVideos[index].getCurrentTime());
 }
 
+
+
 /**
  * Pause the selected videos
  * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
@@ -993,10 +1049,9 @@ function here(list){
 }
 
 
-function euclid(list, onNotes, totalNotes, duration){
-	
-   sequence(list, euclidean_durations(onNotes, totalNotes, duration), duration); 
-
+function euclid(list, onNotes, totalNotes, duration, offset=0){
+  ed = euclidean_durations(onNotes, totalNotes, duration, offset);
+  sequence(list, ed , duration); 
 }
 
 function sequence(list, steps, interval){
@@ -1010,10 +1065,51 @@ function sequence(list, steps, interval){
     }
     video.loopHandle = setInterval(function(){
       idx+=1;
-	  if(idx > steps.length)
+	    if(idx >= steps.length)
         idx=0;
 
-      video.seekTo(steps[idx])
+      video.seekTo(steps[idx]);
+
+    },(interval)* 1000);
+  });
+}
+
+function seq(list, steps, spread, offset){
+  var selectedVideos =  selectVideos(list);
+
+  selectedVideos.forEach(function(video, index){
+    idx = 0;
+    video.seekTo(steps[idx]*spread+offset)
+    if(video.loopHandle){
+      clearInterval(video.loopHandle);
+    }
+    video.loopHandle = setInterval(function(){
+      idx+=1;
+      if(idx >= steps.length)
+        idx=0;
+
+      video.seekTo(steps[idx]*spread+offset);
+
+    },steps[idx]* 1000);
+  });
+}
+
+function sequence(list, steps, interval){
+  var selectedVideos =  selectVideos(list);
+
+  selectedVideos.forEach(function(video, index){
+    idx = 0;
+    video.seekTo(steps[idx])
+    if(video.loopHandle){
+      clearInterval(video.loopHandle);
+    }
+    video.loopHandle = setInterval(function(){
+      idx+=1;
+      if(idx >= steps.length)
+        idx=0;
+
+      video.seekTo(steps[idx]);
+
     },(interval)* 1000);
   });
 }
